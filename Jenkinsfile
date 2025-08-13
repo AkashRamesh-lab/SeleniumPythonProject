@@ -7,32 +7,25 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                echo 'Cloning repository...'
-                // Git repo is automatically cloned if Jenkinsfile is from SCM
-            }
-        }
-
         stage('Setup Python') {
             steps {
                 echo 'Setting up virtual environment and installing dependencies...'
-                sh '''
-                    python3 -m venv ${VENV_DIR}
-                    . ${VENV_DIR}/bin/activate
-                    pip install --upgrade pip
+                bat """
+                    python -m venv %VENV_DIR%
+                    call %VENV_DIR%\\Scripts\\activate
+                    python -m pip install --upgrade pip
                     pip install -r requirements.txt
-                '''
+                """
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running tests and generating HTML report...'
-                sh '''
-                    . ${VENV_DIR}/bin/activate
-                    pytest tests/ --html=${REPORT_NAME}
-                '''
+                bat """
+                    call %VENV_DIR%\\Scripts\\activate
+                    pytest tests/ --html=%REPORT_NAME%
+                """
             }
         }
 
